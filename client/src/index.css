@@ -1,0 +1,266 @@
+/* Here I keep all the colours in one place */
+:root {
+  --paper: #f7f3ec;
+  --card: #fffdf9;
+  --ink: #1f2a2e;
+  --muted: #5d6a6b;
+  --line: #ddd5c7;
+  --teal: #0f6b62;
+  --red: #a93a1d;
+  --amber: #fbe8bf;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+/* Here the app is one narrow column because it is made for phones first */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+}
+
+.brand {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--teal);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+a {
+  color: var(--teal);
+}
+
+.muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.row > label {
+  flex: 1;
+  min-width: 130px;
+}
+
+/* Here buttons and inputs are at least 44px tall so they are easy to tap */
+button {
+  min-height: 44px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--teal);
+  border: 1px solid var(--teal);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.plain {
+  color: var(--teal);
+  background: transparent;
+  border-color: var(--line);
+}
+
+button.danger {
+  color: var(--red);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+:focus-visible {
+  outline: 3px solid #e9a23b;
+  outline-offset: 2px;
+}
+
+.error {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.banner {
+  padding: 12px;
+  background: var(--amber);
+  border-radius: 8px;
+}
+
+.login {
+  padding-top: 40px;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.join-form input {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.trip-list,
+.day ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trip-link {
+  gap: 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Here the invite code looks like a travel ticket */
+.ticket {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 2px dashed var(--teal);
+  border-radius: 8px;
+}
+
+.ticket strong {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  user-select: all;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Here each activity shows the time on the left and the details on the right */
+.activity {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.activity time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.activity > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.tag.flight {
+  color: #1d5fa8;
+}
+
+.tag.hotel {
+  color: #6a3fa0;
+}
+
+.tag.meal {
+  color: var(--red);
+}
