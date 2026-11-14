@@ -1,9 +1,10 @@
 import 'fake-indexeddb/auto'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { getWithOffline, saveSession } from './api'
 import { groupByDay } from './itinerary'
 import Trip from './pages/Trip'
+import TripForm from './components/TripForm'
 
 const trip = {
   _id: 't1',
@@ -78,4 +79,20 @@ test('the traveller can read the plan but cannot edit it', async () => {
   expect(await screen.findByText('Flight')).toBeTruthy()
   expect(screen.queryByText('Add activity')).toBeNull()
   expect(screen.queryByText('ABCD1234')).toBeNull()
+})
+
+test('the trip form shows a clear message and does not save a wrong trip', async () => {
+  const onSubmit = vi.fn()
+  render(<TripForm trip={{ ...trip, endDate: '2027-01-01' }} onSubmit={onSubmit} onCancel={() => {}} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByText('End date must be on or after the start date')).toBeTruthy()
+  expect(onSubmit).not.toHaveBeenCalled()
+})
+
+test('the trip form saves when every field is correct', async () => {
+  const onSubmit = vi.fn(async () => {})
+  render(<TripForm trip={trip} onSubmit={onSubmit} onCancel={() => {}} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
+  expect(onSubmit.mock.calls[0][0].title).toBe('Japan')
 })

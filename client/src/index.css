@@ -158,6 +158,17 @@ textarea {
   font-weight: 600;
 }
 
+/* Here a wrong field gets a red border and its message right under it */
+.field-error {
+  color: var(--red);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+label:has(.field-error) :is(input, textarea) {
+  border-color: var(--red);
+}
+
 .banner {
   padding: 12px;
   background: var(--amber);

@@ -1,13 +1,20 @@
-import Form from './Form'
+import Form, { FieldError } from './Form'
+import { validateActivity } from '../validation'
 
 // Here I use the same form to add and to edit an activity.
-// The min and max keep the date inside the trip.
+// The min and max keep the date picker inside the trip, and validateActivity checks it again.
 export default function ActivityForm({ trip, activity = {}, onSubmit, onCancel }) {
   return (
-    <Form title={activity._id ? 'Edit activity' : 'Add activity'} onSubmit={onSubmit} onCancel={onCancel}>
+    <Form
+      title={activity._id ? 'Edit activity' : 'Add activity'}
+      validate={(values) => validateActivity(values, trip)}
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+    >
       <label>
         What is happening?
         <input name="title" defaultValue={activity.title} maxLength={120} required />
+        <FieldError name="title" />
       </label>
       <div className="row">
         <label>
@@ -20,10 +27,12 @@ export default function ActivityForm({ trip, activity = {}, onSubmit, onCancel }
             defaultValue={activity.date || trip.startDate}
             required
           />
+          <FieldError name="date" />
         </label>
         <label>
           Time
           <input type="time" name="time" defaultValue={activity.time} />
+          <FieldError name="time" />
         </label>
       </div>
       <label>
@@ -39,10 +48,12 @@ export default function ActivityForm({ trip, activity = {}, onSubmit, onCancel }
       <label>
         Location
         <input name="location" defaultValue={activity.location} maxLength={120} />
+        <FieldError name="location" />
       </label>
       <label>
         Notes
         <textarea name="notes" defaultValue={activity.notes} maxLength={500} rows={3} />
+        <FieldError name="notes" />
       </label>
     </Form>
   )
