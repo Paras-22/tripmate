@@ -5,6 +5,12 @@ const mongoose = require('mongoose')
 const authRoutes = require('./routes/auth')
 const tripRoutes = require('./routes/trips')
 const { logger, requestLogger } = require('./logger')
+const tripEvents = require('./tripEvents')
+const { notifyTravellers } = require('./push')
+
+// Here I subscribe the observers that react when a trip changes
+tripEvents.subscribe(notifyTravellers)
+tripEvents.subscribe((trip, message) => logger.info('Trip changed', { trip: trip.id, message }))
 
 // Here I stop NoSQL injection, like sending { "$ne": "" } instead of a real value
 mongoose.set('sanitizeFilter', true)

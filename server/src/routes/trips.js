@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const express = require('express')
 const Trip = require('../models/Trip')
 const { requireAuth, requireOrganiser, loadTrip } = require('../middleware/auth')
-const { notifyTravellers } = require('../push')
+const tripEvents = require('../tripEvents')
 
 const router = express.Router()
 
@@ -40,13 +40,13 @@ router.get('/:id', loadTrip, (req, res) => {
 router.put('/:id', requireOrganiser, loadTrip, async (req, res) => {
   req.trip.set(pick(req.body, TRIP_FIELDS))
   await req.trip.save()
-  await notifyTravellers(req.trip, 'The trip details were updated')
+  await tripEvents.publish(req.trip, 'The trip details were updated')
   res.json(req.trip)
 })
 
 // DELETE: whole trip. I tell the travellers first because the subscriptions go with it.
 router.delete('/:id', requireOrganiser, loadTrip, async (req, res) => {
-  await notifyTravellers(req.trip, 'This trip was cancelled')
+  await tripEvents.publish(req.trip, 'This trip was cancelled')
   await req.trip.deleteOne()
   res.json({ message: 'Trip deleted' })
 })
@@ -55,7 +55,7 @@ router.delete('/:id', requireOrganiser, loadTrip, async (req, res) => {
 router.post('/:id/activities', requireOrganiser, loadTrip, async (req, res) => {
   req.trip.activities.push(pick(req.body, ACTIVITY_FIELDS))
   await req.trip.save()
-  await notifyTravellers(req.trip, `New activity: ${req.trip.activities.at(-1).title}`)
+  await tripEvents.publish(req.trip, `New activity: ${req.trip.activities.at(-1).title}`)
   res.status(201).json(req.trip)
 })
 
@@ -66,7 +66,7 @@ router.put('/:id/activities/:activityId', requireOrganiser, loadTrip, async (req
 
   activity.set(pick(req.body, ACTIVITY_FIELDS))
   await req.trip.save()
-  await notifyTravellers(req.trip, `Updated: ${activity.title}`)
+  await tripEvents.publish(req.trip, `Updated: ${activity.title}`)
   res.json(req.trip)
 })
 
@@ -78,7 +78,7 @@ router.delete('/:id/activities/:activityId', requireOrganiser, loadTrip, async (
   const { title } = activity
   activity.deleteOne()
   await req.trip.save()
-  await notifyTravellers(req.trip, `Removed: ${title}`)
+  await tripEvents.publish(req.trip, `Removed: ${title}`)
   res.json(req.trip)
 })
 

@@ -18,6 +18,7 @@ require.cache[require.resolve('web-push')] = {
 const app = require('../src/app')
 const Trip = require('../src/models/Trip')
 const { connectDB } = require('../src/db')
+const tripEvents = require('../src/tripEvents')
 
 mock.method(OAuth2Client.prototype, 'verifyIdToken', async ({ idToken }) => {
   if (idToken !== 'good-credential') throw new Error('bad')
@@ -184,5 +185,23 @@ describe('database connection', () => {
     const second = await connectDB()
     assert.equal(first, second)
     assert.equal(first, mongoose.connection)
+  })
+})
+
+describe('trip change observers', () => {
+  const activitiesUrl = () => '/api/trips/' + trip._id + '/activities'
+
+  test('tells every subscribed observer when the organiser changes the plan (Observer)', async () => {
+    const observer = mock.fn(async () => {})
+    tripEvents.subscribe(observer)
+    await request(app).post(activitiesUrl()).set(bearer(organiser)).send(newActivity)
+    assert.equal(observer.mock.callCount(), 1)
+    assert.match(observer.mock.calls[0].arguments[1], /New activity: Flight to Tokyo/)
+  })
+
+  test('one failing observer does not stop the others', async () => {
+    tripEvents.subscribe(async () => { throw new Error('broken observer') })
+    const res = await request(app).post(activitiesUrl()).set(bearer(organiser)).send(newActivity)
+    assert.equal(res.status, 201)
   })
 })

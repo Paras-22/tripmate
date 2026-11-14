@@ -31,7 +31,8 @@ server/src/
   middleware/auth.js     JWT check and roles
   routes/auth.js         Google sign in and invite code join
   routes/trips.js        CRUD for trips and activities
-  push.js                sends push notifications
+  tripEvents.js          tells observers when a trip changes (Observer)
+  push.js                sends push notifications (an observer)
 server/tests/
   api.test.js            API tests
 client/src/
