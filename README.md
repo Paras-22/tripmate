@@ -23,7 +23,9 @@ TripMate is a Progressive Web App that keeps a group's trip plan in one place. T
 
 ```
 server/src/
-  index.js               connects to MongoDB and starts the server
+  index.js               starts the server
+  db.js                  one shared MongoDB connection (Singleton)
+  logger.js              logs requests and errors to the terminal and logs/app.log
   app.js                 security headers, routes, error handling
   models/Trip.js         trip, activity and push subscription data
   middleware/auth.js     JWT check and roles

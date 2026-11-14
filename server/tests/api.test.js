@@ -17,6 +17,7 @@ require.cache[require.resolve('web-push')] = {
 }
 const app = require('../src/app')
 const Trip = require('../src/models/Trip')
+const { connectDB } = require('../src/db')
 
 mock.method(OAuth2Client.prototype, 'verifyIdToken', async ({ idToken }) => {
   if (idToken !== 'good-credential') throw new Error('bad')
@@ -33,7 +34,7 @@ const bearer = (token) => ({ Authorization: `Bearer ${token}` })
 
 before(async () => {
   mongo = await MongoMemoryServer.create({ instance: { launchTimeout: 60000 } })
-  await mongoose.connect(mongo.getUri())
+  await connectDB(mongo.getUri())
 })
 
 after(async () => {
@@ -174,5 +175,14 @@ describe('push notifications', () => {
       .set(bearer(traveller))
       .send({ ...subscription, endpoint: 'http://localhost:27017' })
       .expect(400)
+  })
+})
+
+describe('database connection', () => {
+  test('gives back the same single connection every time (Singleton)', async () => {
+    const first = await connectDB()
+    const second = await connectDB()
+    assert.equal(first, second)
+    assert.equal(first, mongoose.connection)
   })
 })
