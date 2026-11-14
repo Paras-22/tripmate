@@ -1,5 +1,6 @@
 const webpush = require('web-push')
 const Trip = require('./models/Trip')
+const { logger } = require('./logger')
 
 // Here I send the same message to every traveller who turned on alerts for this trip
 async function notifyTravellers(trip, message) {
@@ -20,7 +21,7 @@ async function notifyTravellers(trip, message) {
       } catch (error) {
         // Here 404 and 410 mean the browser removed the subscription, so I delete it
         if ([404, 410].includes(error.statusCode)) expired.push(endpoint)
-        else console.error('Push failed:', error.message)
+        else logger.warn('Push failed', { status: error.statusCode, error: error.message })
       }
     }),
   )

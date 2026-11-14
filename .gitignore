@@ -4,3 +4,4 @@ dev-dist
 .env
 db-data
 coverage
+logs

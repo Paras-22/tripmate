@@ -4,6 +4,7 @@ const helmet = require('helmet')
 const mongoose = require('mongoose')
 const authRoutes = require('./routes/auth')
 const tripRoutes = require('./routes/trips')
+const { logger, requestLogger } = require('./logger')
 
 // Here I stop NoSQL injection, like sending { "$ne": "" } instead of a real value
 mongoose.set('sanitizeFilter', true)
@@ -28,6 +29,7 @@ app.use(
   }),
 )
 app.use(express.json({ limit: '100kb' }))
+app.use('/api', requestLogger)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/trips', tripRoutes)
@@ -43,7 +45,7 @@ app.use((err, req, res, next) => {
   }
   if (err.name === 'CastError') return res.status(404).json({ error: 'Not found' })
   if (err.status) return res.status(err.status).json({ error: err.message })
-  console.error(err)
+  logger.error(err.message, { stack: err.stack })
   res.status(500).json({ error: 'Something went wrong' })
 })
 

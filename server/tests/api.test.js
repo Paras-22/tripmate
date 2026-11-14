@@ -5,6 +5,7 @@ const request = require('supertest')
 const { OAuth2Client } = require('google-auth-library')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 
+process.env.NODE_ENV = 'test'
 process.env.JWT_SECRET = 'test-secret'
 process.env.GOOGLE_CLIENT_ID = 'test-client-id'
 
