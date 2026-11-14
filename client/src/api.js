@@ -33,8 +33,10 @@ export async function api(path, method = 'GET', body) {
   return data
 }
 
-// Here I did the offline logic: use the server when I can and save the answer,
-// and when there is no connection use the last saved answer from IndexedDB.
+// Here I used the Proxy pattern for reading data. The pages ask this proxy instead of
+// the server. The proxy uses the server when it can and saves the answer, and when there
+// is no connection it gives back the last saved answer from IndexedDB. The pages do not
+// need to know if the data came from the server or from the phone.
 export async function getWithOffline(path) {
   try {
     const data = await api(path)
