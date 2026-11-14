@@ -6,8 +6,12 @@ const tripEvents = require('../tripEvents')
 
 const router = express.Router()
 
-// Here I protect every trip route with the JWT check
+// Here I used the Intercepting Filter pattern. Every request passes through a chain
+// of filters before it reaches the route: requireAuth checks the JWT, requireOrganiser
+// checks the role and loadTrip checks the user belongs to the trip. Any filter can stop
+// the request early, so the routes below only hold the real work.
 router.use(requireAuth)
+const organiserOfTrip = [requireOrganiser, loadTrip]
 
 // Here I only take the fields I allow, so the browser cannot change organiserId or inviteCode
 function pick(body, fields) {
@@ -37,7 +41,7 @@ router.get('/:id', loadTrip, (req, res) => {
 })
 
 // UPDATE: trip details
-router.put('/:id', requireOrganiser, loadTrip, async (req, res) => {
+router.put('/:id', organiserOfTrip, async (req, res) => {
   req.trip.set(pick(req.body, TRIP_FIELDS))
   await req.trip.save()
   await tripEvents.publish(req.trip, 'The trip details were updated')
@@ -45,14 +49,14 @@ router.put('/:id', requireOrganiser, loadTrip, async (req, res) => {
 })
 
 // DELETE: whole trip. I tell the travellers first because the subscriptions go with it.
-router.delete('/:id', requireOrganiser, loadTrip, async (req, res) => {
+router.delete('/:id', organiserOfTrip, async (req, res) => {
   await tripEvents.publish(req.trip, 'This trip was cancelled')
   await req.trip.deleteOne()
   res.json({ message: 'Trip deleted' })
 })
 
 // CREATE: new activity in the itinerary
-router.post('/:id/activities', requireOrganiser, loadTrip, async (req, res) => {
+router.post('/:id/activities', organiserOfTrip, async (req, res) => {
   req.trip.activities.push(pick(req.body, ACTIVITY_FIELDS))
   await req.trip.save()
   await tripEvents.publish(req.trip, `New activity: ${req.trip.activities.at(-1).title}`)
@@ -60,7 +64,7 @@ router.post('/:id/activities', requireOrganiser, loadTrip, async (req, res) => {
 })
 
 // UPDATE: one activity
-router.put('/:id/activities/:activityId', requireOrganiser, loadTrip, async (req, res) => {
+router.put('/:id/activities/:activityId', organiserOfTrip, async (req, res) => {
   const activity = req.trip.activities.id(req.params.activityId)
   if (!activity) return res.status(404).json({ error: 'Activity not found' })
 
@@ -71,7 +75,7 @@ router.put('/:id/activities/:activityId', requireOrganiser, loadTrip, async (req
 })
 
 // DELETE: one activity
-router.delete('/:id/activities/:activityId', requireOrganiser, loadTrip, async (req, res) => {
+router.delete('/:id/activities/:activityId', organiserOfTrip, async (req, res) => {
   const activity = req.trip.activities.id(req.params.activityId)
   if (!activity) return res.status(404).json({ error: 'Activity not found' })
 
