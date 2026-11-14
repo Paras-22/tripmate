@@ -5,6 +5,8 @@ import { getWithOffline, saveSession } from './api'
 import { groupByDay } from './itinerary'
 import Trip from './pages/Trip'
 import TripForm from './components/TripForm'
+import Login from './pages/Login'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 const trip = {
   _id: 't1',
@@ -95,4 +97,18 @@ test('the trip form saves when every field is correct', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Save' }))
   await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1))
   expect(onSubmit.mock.calls[0][0].title).toBe('Japan')
+})
+
+test('a wrong invite code shows a message and is not sent to the server', async () => {
+  render(
+    <GoogleOAuthProvider clientId="test">
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    </GoogleOAuthProvider>,
+  )
+  fireEvent.change(screen.getByLabelText('Invite code'), { target: { value: 'ABC' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Join trip' }))
+  expect(await screen.findByText(/8 letters and numbers/)).toBeTruthy()
+  expect(fetch).not.toHaveBeenCalled()
 })

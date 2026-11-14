@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { api, saveSession } from '../api'
+import { validateInviteCode } from '../validation'
 
 // Here I made the first page with the two ways in: Google for organisers, invite code for travellers
 export default function Login() {
   const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+  const [codeError, setCodeError] = useState('')
 
   async function signIn(path, body) {
     setError('')
@@ -19,9 +21,12 @@ export default function Login() {
     }
   }
 
+  // Here I check the code looks right before asking the server
   function handleJoin(event) {
     event.preventDefault()
-    signIn('/auth/join', { code })
+    const problem = validateInviteCode(code)
+    setCodeError(problem)
+    if (!problem) signIn('/auth/join', { code: code.trim() })
   }
 
   return (
@@ -32,7 +37,7 @@ export default function Login() {
 
       <section className="card">
         <h2>Joining a trip?</h2>
-        <form onSubmit={handleJoin} className="join-form">
+        <form onSubmit={handleJoin} className="join-form" noValidate>
           <label>
             Invite code
             <input
@@ -42,6 +47,7 @@ export default function Login() {
               autoComplete="off"
               required
             />
+            {codeError && <span className="field-error" role="alert">{codeError}</span>}
           </label>
           <button>Join trip</button>
         </form>
