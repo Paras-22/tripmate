@@ -1,4 +1,5 @@
-require('dotenv').config()
+// Here the .env file stays in the server folder, one level above src
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') })
 const mongoose = require('mongoose')
 const app = require('./app')
 

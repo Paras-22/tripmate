@@ -9,7 +9,7 @@ const tripRoutes = require('./routes/trips')
 mongoose.set('sanitizeFilter', true)
 
 const app = express()
-const clientFolder = path.join(__dirname, '../client/dist')
+const clientFolder = path.join(__dirname, '../../client/dist')
 
 // Here I added the security headers. Google sign in needs its own script, frame and popup.
 app.use(

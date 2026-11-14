@@ -22,7 +22,7 @@ TripMate is a Progressive Web App that keeps a group's trip plan in one place. T
 ## Folders
 
 ```
-server/
+server/src/
   index.js               connects to MongoDB and starts the server
   app.js                 security headers, routes, error handling
   models/Trip.js         trip, activity and push subscription data
@@ -30,7 +30,8 @@ server/
   routes/auth.js         Google sign in and invite code join
   routes/trips.js        CRUD for trips and activities
   push.js                sends push notifications
-  tests/api.test.js      API tests
+server/tests/
+  api.test.js            API tests
 client/src/
   App.jsx                pages and routes
   api.js                 API calls and offline fallback

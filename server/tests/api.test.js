@@ -14,8 +14,8 @@ require.cache[require.resolve('web-push')] = {
   loaded: true,
   exports: { setVapidDetails() {}, sendNotification: sendPush },
 }
-const app = require('../app')
-const Trip = require('../models/Trip')
+const app = require('../src/app')
+const Trip = require('../src/models/Trip')
 
 mock.method(OAuth2Client.prototype, 'verifyIdToken', async ({ idToken }) => {
   if (idToken !== 'good-credential') throw new Error('bad')

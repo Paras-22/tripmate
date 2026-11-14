@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "commonjs",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
     "test": "node --test --test-timeout=120000 tests/api.test.js"
   },
   "dependencies": {
