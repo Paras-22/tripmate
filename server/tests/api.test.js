@@ -2,6 +2,7 @@ const assert = require('node:assert/strict')
 const { after, before, beforeEach, describe, mock, test } = require('node:test')
 const mongoose = require('mongoose')
 const request = require('supertest')
+const jwt = require('jsonwebtoken')
 const { OAuth2Client } = require('google-auth-library')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 
@@ -74,6 +75,41 @@ describe('sign in', () => {
 
   test('blocks requests with no token', async () => {
     await request(app).get(`/api/trips/${trip._id}`).expect(401)
+  })
+
+  // Here I try the token tricks an attacker could use
+  test('blocks a token that is expired, faked or unsigned', async () => {
+    const user = { sub: 'good-credential', role: 'organiser' }
+    const expired = jwt.sign(user, 'test-secret', { expiresIn: -10 })
+    const faked = jwt.sign(user, 'wrong-secret')
+    const unsigned = jwt.sign(user, null, { algorithm: 'none' })
+
+    for (const token of [expired, faked, unsigned]) {
+      await request(app).get('/api/trips').set(bearer(token)).expect(401)
+    }
+  })
+
+  test('a traveller cannot see the list of all trips', async () => {
+    await request(app).get('/api/trips').set(bearer(traveller)).expect(403)
+  })
+})
+
+describe('errors', () => {
+  test('a wrong trip id or activity id gives 404', async () => {
+    await request(app).get('/api/trips/not-an-id').set(bearer(organiser)).expect(404)
+    await request(app)
+      .delete(`/api/trips/${trip._id}/activities/${new mongoose.Types.ObjectId()}`)
+      .set(bearer(organiser))
+      .expect(404)
+  })
+
+  test('an unexpected error gives a simple message and hides the details', async () => {
+    const find = mock.method(Trip, 'find', () => {
+      throw new Error('database is down at 10.0.0.5')
+    })
+    const res = await request(app).get('/api/trips').set(bearer(organiser)).expect(500)
+    find.mock.restore()
+    assert.deepEqual(res.body, { error: 'Something went wrong' })
   })
 })
 
