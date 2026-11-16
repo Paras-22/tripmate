@@ -1,10 +1,12 @@
 import 'fake-indexeddb/auto'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { getWithOffline, saveSession } from './api'
 import { groupByDay } from './itinerary'
 import Trip from './pages/Trip'
 import TripForm from './components/TripForm'
+import ActivityForm from './components/ActivityForm'
+import useOnline from './useOnline'
 import Login from './pages/Login'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
@@ -111,4 +113,34 @@ test('a wrong invite code shows a message and is not sent to the server', async 
   fireEvent.click(screen.getByRole('button', { name: 'Join trip' }))
   expect(await screen.findByText(/8 letters and numbers/)).toBeTruthy()
   expect(fetch).not.toHaveBeenCalled()
+})
+
+test('the activity form stops a date outside the trip', async () => {
+  const onSubmit = vi.fn()
+  render(<ActivityForm trip={trip} activity={{ title: 'Museum', date: '2027-02-01' }} onSubmit={onSubmit} onCancel={() => {}} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByText('Pick a date between 2027-01-10 and 2027-01-12')).toBeTruthy()
+  expect(onSubmit).not.toHaveBeenCalled()
+})
+
+test('the form tells the user when saving fails with no connection', async () => {
+  const onSubmit = vi.fn(async () => {
+    throw new TypeError('Failed to fetch')
+  })
+  render(<TripForm trip={trip} onSubmit={onSubmit} onCancel={() => {}} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByText('Could not save. Check your connection.')).toBeTruthy()
+  expect(screen.getByRole('button', { name: 'Save' }).disabled).toBe(false)
+})
+
+test('useOnline follows the internet going off and on', () => {
+  const { result } = renderHook(() => useOnline())
+  const setOnline = (value) => {
+    Object.defineProperty(navigator, 'onLine', { value, configurable: true })
+    act(() => window.dispatchEvent(new Event(value ? 'online' : 'offline')))
+  }
+  setOnline(false)
+  expect(result.current).toBe(false)
+  setOnline(true)
+  expect(result.current).toBe(true)
 })
