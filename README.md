@@ -110,7 +110,7 @@ The data files are stored on this computer in `db-data`.
 
 ## Tests
 
-Every source file has its own test file next to it (for example `Login.jsx` and `Login.test.jsx`). The server has 67 tests and the frontend has 91.
+Every source file has its own test file. Frontend tests sit next to their file (for example `Login.jsx` and `Login.test.jsx`), and server tests are in `server/tests`. The server has 67 tests and the frontend has 91.
 
 ```
 cd server
