@@ -6,7 +6,19 @@ const TIME_FORMAT = /^\d{2}:\d{2}$/
 
 // Here I made one activity of the itinerary, like a flight, hotel, tour or meal
 const activitySchema = new mongoose.Schema({
-  date: { type: String, required: true, match: DATE_FORMAT },
+  date: {
+    type: String,
+    required: true,
+    match: DATE_FORMAT,
+    // Here I check the date on the server too, because a request can skip my React form
+    validate: {
+      validator(value) {
+        const trip = this.ownerDocument()
+        return value >= trip.startDate && value <= trip.endDate
+      },
+      message: 'The activity date must be inside the trip dates',
+    },
+  },
   time: { type: String, match: TIME_FORMAT },
   title: { type: String, required: true, trim: true, maxlength: 120 },
   type: { type: String, enum: ['flight', 'hotel', 'tour', 'meal', 'other'], default: 'other' },

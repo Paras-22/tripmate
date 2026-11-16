@@ -113,6 +113,15 @@ describe('organiser CRUD', () => {
       .expect(400)
   })
 
+  test('rejects an activity outside the trip dates, even without the React form', async () => {
+    const res = await request(app)
+      .post(`/api/trips/${trip._id}/activities`)
+      .set(bearer(organiser))
+      .send({ ...newActivity, date: '2027-02-01' })
+      .expect(400)
+    assert.equal(res.body.error, 'The activity date must be inside the trip dates')
+  })
+
   test('cannot change the organiser or invite code', async () => {
     const res = await request(app)
       .put(`/api/trips/${trip._id}`)
