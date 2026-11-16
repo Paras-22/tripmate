@@ -1,0 +1,1061 @@
+{
+  "info": {
+    "name": "TripMate API",
+    "description": "Here I test every TripMate API route.\n\nBefore you run it:\n1. Start the server (npm start in the server folder).\n2. Sign in as the organiser at http://localhost:5000.\n3. In the browser press F12 > Application > Local storage > http://localhost:5000, open \"session\" and copy the \"token\" value.\n4. Paste it into the organiserToken collection variable.\n\nThen run the whole collection in order with the Runner. The requests save the trip id, invite code, activity id and traveller token for the next requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "organiserToken",
+      "value": ""
+    },
+    {
+      "key": "travellerToken",
+      "value": ""
+    },
+    {
+      "key": "tripId",
+      "value": ""
+    },
+    {
+      "key": "inviteCode",
+      "value": ""
+    },
+    {
+      "key": "activityId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Sign in",
+      "item": [
+        {
+          "name": "Google sign in with a fake credential",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"credential\": \"fake-credential\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a fake Google credential is rejected', () => pm.response.to.have.status(401))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Join with a wrong invite code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/join",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "join"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"WRONG123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a wrong code is rejected', () => pm.response.to.have.status(404))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Join with NoSQL injection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/join",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "join"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": {\n    \"$ne\": \"\"\n  }\n}"
+            },
+            "description": "Here I send an object instead of a code. Without protection this would match any trip."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the $ne trick does not join a trip', () => pm.response.to.have.status(404))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Trips (organiser)",
+      "item": [
+        {
+          "name": "Create a trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Japan\",\n  \"destination\": \"Tokyo\",\n  \"startDate\": \"2027-01-10\",\n  \"endDate\": \"2027-01-15\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the trip is created', () => pm.response.to.have.status(201))",
+                  "const trip = pm.response.json()",
+                  "pm.test('it has an 8 character invite code', () => pm.expect(trip.inviteCode).to.match(/^[A-F0-9]{8}$/))",
+                  "pm.test('push data is not sent back', () => pm.expect(trip.subscriptions).to.be.undefined)",
+                  "pm.collectionVariables.set('tripId', trip._id)",
+                  "pm.collectionVariables.set('inviteCode', trip.inviteCode)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create a trip that ends before it starts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Japan\",\n  \"destination\": \"Tokyo\",\n  \"startDate\": \"2027-01-10\",\n  \"endDate\": \"2027-01-01\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a wrong trip is rejected', () => pm.response.to.have.status(400))",
+                  "pm.test('the message explains why', () => pm.expect(pm.response.json().error).to.eql('End date must be on or after the start date'))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my trips",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the list is returned', () => pm.response.to.have.status(200))",
+                  "pm.test('the new trip is in the list', () => pm.expect(pm.response.json().map((t) => t._id)).to.include(pm.collectionVariables.get('tripId')))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read one trip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the trip is returned', () => pm.response.to.have.status(200))",
+                  "pm.test('it is the right trip', () => pm.expect(pm.response.json().title).to.eql('Japan'))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update the trip",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Japan 2027\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the trip is updated', () => pm.response.to.have.status(200))",
+                  "pm.test('the new name is saved', () => pm.expect(pm.response.json().title).to.eql('Japan 2027'))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Try to change the organiser and invite code",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organiserId\": \"someone-else\",\n  \"inviteCode\": \"AAAA0000\"\n}"
+            },
+            "description": "Here I check that the server only takes the fields I allow."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the request is answered', () => pm.response.to.have.status(200))",
+                  "pm.test('the invite code did not change', () => pm.expect(pm.response.json().inviteCode).to.eql(pm.collectionVariables.get('inviteCode')))",
+                  "pm.test('the organiser did not change', () => pm.expect(pm.response.json().organiserId).to.not.eql('someone-else'))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Activities (organiser)",
+      "item": [
+        {
+          "name": "Add an activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2027-01-10\",\n  \"time\": \"09:30\",\n  \"title\": \"Flight to Tokyo\",\n  \"type\": \"flight\",\n  \"location\": \"Auckland Airport\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the activity is added', () => pm.response.to.have.status(201))",
+                  "const activities = pm.response.json().activities",
+                  "pm.test('it is in the itinerary', () => pm.expect(activities.at(-1).title).to.eql('Flight to Tokyo'))",
+                  "pm.collectionVariables.set('activityId', activities.at(-1)._id)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add an activity outside the trip dates",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2027-02-01\",\n  \"time\": \"09:30\",\n  \"title\": \"Flight to Tokyo\",\n  \"type\": \"flight\",\n  \"location\": \"Auckland Airport\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the date is rejected', () => pm.response.to.have.status(400))",
+                  "pm.test('the message explains why', () => pm.expect(pm.response.json().error).to.eql('The activity date must be inside the trip dates'))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add an activity with a wrong time",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2027-01-10\",\n  \"time\": \"9am\",\n  \"title\": \"Flight to Tokyo\",\n  \"type\": \"flight\",\n  \"location\": \"Auckland Airport\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the time is rejected', () => pm.response.to.have.status(400))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update the activity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities/{{activityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities",
+                "{{activityId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"time\": \"10:15\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the activity is updated', () => pm.response.to.have.status(200))",
+                  "const saved = pm.response.json().activities.find((a) => a._id === pm.collectionVariables.get('activityId'))",
+                  "pm.test('the new time is saved', () => pm.expect(saved.time).to.eql('10:15'))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Traveller",
+      "item": [
+        {
+          "name": "Join with the invite code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/join",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "join"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"{{inviteCode}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the traveller joins', () => pm.response.to.have.status(200))",
+                  "const user = pm.response.json()",
+                  "pm.test('the traveller gets the traveller role', () => pm.expect(user.role).to.eql('traveller'))",
+                  "pm.collectionVariables.set('travellerToken', user.token)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the trip as traveller",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the traveller can read the plan', () => pm.response.to.have.status(200))",
+                  "pm.test('push data is hidden', () => pm.expect(pm.response.json().subscriptions).to.be.undefined)"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Turn on alerts with a non-https address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/subscribe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "subscribe"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endpoint\": \"http://localhost:27017\",\n  \"keys\": {\n    \"p256dh\": \"a\",\n    \"auth\": \"b\"\n  }\n}"
+            },
+            "description": "Here I check that the server will not call an internal address."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a non-https address is rejected', () => pm.response.to.have.status(400))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Turn on alerts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/subscribe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "subscribe"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endpoint\": \"https://push.example.com/postman-test\",\n  \"keys\": {\n    \"p256dh\": \"test-key\",\n    \"auth\": \"test-auth\"\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the subscription is saved', () => pm.response.to.have.status(201))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Security checks",
+      "item": [
+        {
+          "name": "Read a trip with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('no token is rejected', () => pm.response.to.have.status(401))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read trips with a faked token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoYWNrZXIiLCJyb2xlIjoib3JnYW5pc2VyIn0.bm90LXRoZS1yZWFsLXNpZ25hdHVyZQ"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips"
+              ]
+            },
+            "description": "Here the token says role organiser, but the signature was not made with my JWT secret."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a faked token is rejected', () => pm.response.to.have.status(401))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Traveller tries to list all trips",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('only organisers can list trips', () => pm.response.to.have.status(403))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Traveller tries to change the trip",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hacked\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a traveller cannot change the trip', () => pm.response.to.have.status(403))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Traveller tries to add an activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{travellerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2027-01-10\",\n  \"time\": \"09:30\",\n  \"title\": \"Flight to Tokyo\",\n  \"type\": \"flight\",\n  \"location\": \"Auckland Airport\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a traveller cannot add activities', () => pm.response.to.have.status(403))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read a trip that does not exist",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "000000000000000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a missing trip gives 404', () => pm.response.to.have.status(404))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Clean up",
+      "item": [
+        {
+          "name": "Delete the activity",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}/activities/{{activityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}",
+                "activities",
+                "{{activityId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the activity is deleted', () => pm.response.to.have.status(200))",
+                  "pm.test('the itinerary is empty again', () => pm.expect(pm.response.json().activities).to.have.length(0))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete the trip",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the trip is deleted', () => pm.response.to.have.status(200))"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the deleted trip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organiserToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "trips",
+                "{{tripId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('the trip is gone', () => pm.response.to.have.status(404))"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

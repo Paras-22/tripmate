@@ -43,6 +43,8 @@ client/src/
   service-worker.js      offline cache and push events
   pages/                 Login, Trips, Trip
   components/            forms
+postman/
+  TripMate.postman_collection.json   API tests for Postman
 scripts/
   start-replica-set.ps1  starts 3 MongoDB members
 ```
@@ -106,6 +108,16 @@ npm test
 cd ../client
 npm test
 ```
+
+## Postman
+
+`postman/TripMate.postman_collection.json` tests every API route: sign in, trip and activity CRUD, traveller access, push subscriptions and security checks (26 requests, 40 checks).
+
+1. In Postman choose **Import** and pick the file.
+2. Start the server and sign in as the organiser at http://localhost:5000.
+3. Press F12 > Application > Local storage > http://localhost:5000, open `session` and copy the `token` value.
+4. Paste it into the collection variable `organiserToken`.
+5. Run the whole collection with the **Runner**. The requests pass the trip id, invite code and traveller token to each other, and the last folder deletes the test trip.
 
 ## Demo steps
 
