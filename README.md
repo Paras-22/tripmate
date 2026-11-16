@@ -34,7 +34,15 @@ server/src/
   tripEvents.js          tells observers when a trip changes (Observer)
   push.js                sends push notifications (an observer)
 server/tests/
-  api.test.js            API tests
+  setup.js               shared setup: in-memory MongoDB, fake Google and push
+  auth.test.js           sign in, invite code, JWT tricks
+  trips.test.js          trip CRUD and who may use it
+  activities.test.js     activity CRUD
+  push.test.js           push alerts
+  db.test.js             one shared connection (Singleton)
+  tripEvents.test.js     observers (Observer)
+  middleware.test.js     unit tests for the auth filters
+  Trip.model.test.js     unit tests for the data rules
 client/src/
   App.jsx                pages and routes
   api.js                 API calls and offline fallback
@@ -101,6 +109,8 @@ mongodb://localhost:27031,localhost:27032,localhost:27033/?replicaSet=rs0
 The data files are stored on this computer in `db-data`.
 
 ## Tests
+
+Every source file has its own test file next to it (for example `Login.jsx` and `Login.test.jsx`). The server has 67 tests and the frontend has 91.
 
 ```
 cd server
