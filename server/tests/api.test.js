@@ -202,6 +202,27 @@ describe('push notifications', () => {
     assert.match(sendPush.mock.calls[0].arguments[1], /Flight to Tokyo/)
   })
 
+  test('tells travellers before the trip is deleted', async () => {
+    await subscribe()
+    await request(app).delete(`/api/trips/${trip._id}`).set(bearer(organiser)).expect(200)
+    assert.equal(sendPush.mock.callCount(), 1)
+    assert.match(sendPush.mock.calls[0].arguments[1], /cancelled/)
+  })
+
+  test('one broken phone does not stop the alert for the others', async () => {
+    await subscribe()
+    await request(app)
+      .post(`/api/trips/${trip._id}/subscribe`)
+      .set(bearer(traveller))
+      .send({ ...subscription, endpoint: 'https://push.example/2' })
+    sendPush.mock.mockImplementationOnce(async () => {
+      throw Object.assign(new Error('push service down'), { statusCode: 500 })
+    })
+    await addActivity().expect(201)
+    assert.equal(sendPush.mock.callCount(), 2)
+    assert.equal((await Trip.findById(trip._id)).subscriptions.length, 2)
+  })
+
   test('removes subscriptions that have expired', async () => {
     await subscribe()
     sendPush.mock.mockImplementation(async () => {
