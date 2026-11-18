@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict')
 const { describe, test } = require('node:test')
 const mongoose = require('mongoose')
-const { app, request, state, bearer, newActivity } = require('./setup')
+const { app, request, state, bearer, newActivity } = require('../helpers/setup')
 
 const activitiesUrl = () => `/api/trips/${state.trip._id}/activities`
 const addActivity = (body = newActivity, token = state.organiser) =>

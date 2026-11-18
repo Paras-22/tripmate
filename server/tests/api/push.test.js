@@ -2,7 +2,7 @@
 // The real push service is replaced in setup.js, so sendPush only records each call.
 const assert = require('node:assert/strict')
 const { describe, test } = require('node:test')
-const { app, Trip, request, state, bearer, sendPush, newActivity, subscription } = require('./setup')
+const { app, Trip, request, state, bearer, sendPush, newActivity, subscription } = require('../helpers/setup')
 
 const subscribe = (body = subscription) =>
   request(app).post(`/api/trips/${state.trip._id}/subscribe`).set(bearer(state.traveller)).send(body)

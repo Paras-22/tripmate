@@ -1,6 +1,6 @@
 const webpush = require('web-push')
-const Trip = require('./models/Trip')
-const { logger } = require('./logger')
+const Trip = require('../models/Trip')
+const { logger } = require('../utils/logger')
 
 // Here I send the same message to every traveller who turned on alerts for this trip
 async function notifyTravellers(trip, message) {

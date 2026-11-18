@@ -1,4 +1,4 @@
-const { logger } = require('./logger')
+const { logger } = require('../utils/logger')
 
 // Here I used the Observer pattern. The trip routes only say "this trip changed",
 // and every observer that subscribed (push alerts, the logger) reacts to it.

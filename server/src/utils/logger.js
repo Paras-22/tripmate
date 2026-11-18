@@ -3,7 +3,7 @@ const path = require('path')
 
 // Here I made a small logger. Every line has the time and the level,
 // it shows in the terminal and is also saved in server/logs/app.log for later checking.
-const logFile = path.join(__dirname, '../logs/app.log')
+const logFile = path.join(__dirname, '../../logs/app.log')
 fs.mkdirSync(path.dirname(logFile), { recursive: true })
 
 function write(level, message, extra) {

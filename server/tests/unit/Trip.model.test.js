@@ -2,7 +2,7 @@
 // validate() checks a trip without saving it, so no database is needed.
 const assert = require('node:assert/strict')
 const { describe, test } = require('node:test')
-const Trip = require('../src/models/Trip')
+const Trip = require('../../src/models/Trip')
 
 const goodTrip = {
   title: 'Japan',

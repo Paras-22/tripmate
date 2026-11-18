@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const express = require('express')
 const Trip = require('../models/Trip')
 const { requireAuth, requireOrganiser, loadTrip } = require('../middleware/auth')
-const tripEvents = require('../tripEvents')
+const tripEvents = require('../services/tripEvents')
 
 const router = express.Router()
 

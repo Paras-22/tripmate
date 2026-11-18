@@ -4,8 +4,8 @@ const assert = require('node:assert/strict')
 const { describe, mock, test } = require('node:test')
 
 process.env.JWT_SECRET = 'test-secret'
-const Trip = require('../src/models/Trip')
-const { createToken, requireAuth, requireOrganiser, loadTrip } = require('../src/middleware/auth')
+const Trip = require('../../src/models/Trip')
+const { createToken, requireAuth, requireOrganiser, loadTrip } = require('../../src/middleware/auth')
 
 // Here a fake response remembers the status and the JSON it was given
 function fakeResponse() {

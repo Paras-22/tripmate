@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { logger } = require('./logger')
+const { logger } = require('../utils/logger')
 
 // Here I used the Singleton pattern for the database connection.
 // The whole app shares one connection (with its own pool), so calling connectDB

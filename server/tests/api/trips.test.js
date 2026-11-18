@@ -1,7 +1,7 @@
 // Here I test the trip CRUD routes in routes/trips.js and who is allowed to use them
 const assert = require('node:assert/strict')
 const { describe, mock, test } = require('node:test')
-const { app, Trip, request, state, bearer, newTrip } = require('./setup')
+const { app, Trip, request, state, bearer, newTrip } = require('../helpers/setup')
 
 const tripUrl = () => `/api/trips/${state.trip._id}`
 

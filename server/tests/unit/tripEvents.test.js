@@ -3,7 +3,7 @@ const assert = require('node:assert/strict')
 const { mock, test } = require('node:test')
 
 process.env.NODE_ENV = 'test' // here the logger stays quiet
-const tripEvents = require('../src/tripEvents')
+const tripEvents = require('../../src/services/tripEvents')
 
 const trip = { id: 't1', title: 'Japan' }
 

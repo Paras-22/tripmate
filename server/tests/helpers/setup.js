@@ -17,9 +17,9 @@ require.cache[require.resolve('web-push')] = {
   exports: { setVapidDetails() {}, sendNotification: sendPush },
 }
 
-const app = require('../src/app')
-const Trip = require('../src/models/Trip')
-const { connectDB } = require('../src/db')
+const app = require('../../src/app')
+const Trip = require('../../src/models/Trip')
+const { connectDB } = require('../../src/config/db')
 
 // Here I replace Google: only the credential "good-credential" is accepted
 mock.method(OAuth2Client.prototype, 'verifyIdToken', async ({ idToken }) => {

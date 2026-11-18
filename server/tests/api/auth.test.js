@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict')
 const { describe, test } = require('node:test')
 const jwt = require('jsonwebtoken')
-const { app, request, state, bearer } = require('./setup')
+const { app, request, state, bearer } = require('../helpers/setup')
 
 describe('Google sign in (organiser)', () => {
   test('gives an organiser JWT for a good Google credential', async () => {

@@ -4,9 +4,9 @@ const helmet = require('helmet')
 const mongoose = require('mongoose')
 const authRoutes = require('./routes/auth')
 const tripRoutes = require('./routes/trips')
-const { logger, requestLogger } = require('./logger')
-const tripEvents = require('./tripEvents')
-const { notifyTravellers } = require('./push')
+const { logger, requestLogger } = require('./utils/logger')
+const tripEvents = require('./services/tripEvents')
+const { notifyTravellers } = require('./services/push')
 
 // Here I subscribe the observers that react when a trip changes
 tripEvents.subscribe(notifyTravellers)

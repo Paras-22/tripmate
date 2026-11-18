@@ -2,8 +2,8 @@
 const assert = require('node:assert/strict')
 const { test } = require('node:test')
 const mongoose = require('mongoose')
-require('./setup') // here setup.js has already connected once
-const { connectDB } = require('../src/db')
+require('../helpers/setup') // here setup.js has already connected once
+const { connectDB } = require('../../src/config/db')
 
 test('gives back the same single connection every time (Singleton)', async () => {
   const first = await connectDB()
