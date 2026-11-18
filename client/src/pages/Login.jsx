@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
-import { api, saveSession } from '../api'
-import { validateInviteCode } from '../validation'
+import { api, saveSession } from '../services/api'
+import { validateInviteCode } from '../utils/validation'
 
 // Here I made the first page with the two ways in: Google for organisers, invite code for travellers
 export default function Login() {

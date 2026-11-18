@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import Form, { FieldError } from './Form'
+import Form, { FieldError } from '../../src/components/Form'
 
 // Here I test the shared Form wrapper that TripForm and ActivityForm both use
 

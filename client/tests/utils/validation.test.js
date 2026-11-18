@@ -1,4 +1,4 @@
-import { validateActivity, validateInviteCode, validateTrip } from './validation'
+import { validateActivity, validateInviteCode, validateTrip } from '../../src/utils/validation'
 
 // Here I test the form rules. Each rule gives back an object of field errors,
 // and an empty object means the form is correct.

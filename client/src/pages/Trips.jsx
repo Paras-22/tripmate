@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { api, getSession, getWithOffline, signOut } from '../api'
-import { formatDate } from '../itinerary'
-import useOnline from '../useOnline'
+import { api, getSession, getWithOffline, signOut } from '../services/api'
+import { formatDate } from '../utils/itinerary'
+import useOnline from '../hooks/useOnline'
 import TripForm from '../components/TripForm'
 
 // Here I made the organiser's home page with the list of trips

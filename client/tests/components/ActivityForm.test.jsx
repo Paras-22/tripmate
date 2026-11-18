@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import ActivityForm from './ActivityForm'
+import ActivityForm from '../../src/components/ActivityForm'
 
 // Here I test the form for adding and editing one activity of the itinerary
 

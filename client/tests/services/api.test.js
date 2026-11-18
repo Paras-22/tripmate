@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
-import { api, getSession, getWithOffline, saveSession, signOut } from './api'
-import { loadOffline, saveOffline } from './offlineDB'
+import { api, getSession, getWithOffline, saveSession, signOut } from '../../src/services/api'
+import { loadOffline, saveOffline } from '../../src/services/offlineDB'
 
 // Here I test api.js: the one place where the frontend talks to the server
 

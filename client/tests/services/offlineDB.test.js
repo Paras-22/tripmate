@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { clearOffline, loadOffline, saveOffline } from './offlineDB'
+import { clearOffline, loadOffline, saveOffline } from '../../src/services/offlineDB'
 
 // Here I test the IndexedDB store that keeps the trips for offline use.
 // fake-indexeddb gives the tests a real IndexedDB that lives in memory.

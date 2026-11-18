@@ -1,4 +1,4 @@
-import { createSubscription, getSubscription, turnOffAlerts } from './push'
+import { createSubscription, getSubscription, turnOffAlerts } from '../../src/services/push'
 
 // Here I test push.js. The test browser has no real push service,
 // so I give it a fake service worker and a fake Notification.

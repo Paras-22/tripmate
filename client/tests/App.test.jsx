@@ -2,8 +2,8 @@ import 'fake-indexeddb/auto'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { saveSession } from './api'
-import App from './App'
+import { saveSession } from '../src/services/api'
+import App from '../src/App'
 
 // Here I test the routes in App.jsx: which page each person sees first
 

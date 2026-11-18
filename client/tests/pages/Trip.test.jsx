@@ -1,9 +1,9 @@
 import 'fake-indexeddb/auto'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { saveSession } from '../api'
-import { clearOffline } from '../offlineDB'
-import Trip from './Trip'
+import { saveSession } from '../../src/services/api'
+import { clearOffline } from '../../src/services/offlineDB'
+import Trip from '../../src/pages/Trip'
 
 // Here I test the itinerary page. Both roles use it, but only the organiser can change it.
 

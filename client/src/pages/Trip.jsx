@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { api, getSession, getWithOffline, signOut } from '../api'
-import { formatDate, groupByDay } from '../itinerary'
-import { createSubscription, getSubscription } from '../push'
-import useOnline from '../useOnline'
+import { api, getSession, getWithOffline, signOut } from '../services/api'
+import { formatDate, groupByDay } from '../utils/itinerary'
+import { createSubscription, getSubscription } from '../services/push'
+import useOnline from '../hooks/useOnline'
 import ActivityForm from '../components/ActivityForm'
 import TripForm from '../components/TripForm'
 

@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { getSession } from './api'
+import { getSession } from './services/api'
 import Login from './pages/Login'
 import Trips from './pages/Trips'
 import Trip from './pages/Trip'

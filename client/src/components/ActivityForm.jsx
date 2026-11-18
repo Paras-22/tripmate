@@ -1,5 +1,5 @@
 import Form, { FieldError } from './Form'
-import { validateActivity } from '../validation'
+import { validateActivity } from '../utils/validation'
 
 // Here I use the same form to add and to edit an activity.
 // The min and max keep the date picker inside the trip, and validateActivity checks it again.

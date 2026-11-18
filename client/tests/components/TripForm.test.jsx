@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import TripForm from './TripForm'
+import TripForm from '../../src/components/TripForm'
 
 // Here I test the form for creating and editing a trip
 

@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { getSession } from '../api'
-import Login from './Login'
+import { getSession } from '../../src/services/api'
+import Login from '../../src/pages/Login'
 
 // Here I test the login page: the invite code for travellers and the Google button for organisers
 

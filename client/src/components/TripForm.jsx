@@ -1,5 +1,5 @@
 import Form, { FieldError } from './Form'
-import { validateTrip } from '../validation'
+import { validateTrip } from '../utils/validation'
 
 // Here I use the same form to create and to edit a trip
 export default function TripForm({ trip = {}, onSubmit, onCancel }) {

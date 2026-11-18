@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import useOnline from './useOnline'
+import useOnline from '../../src/hooks/useOnline'
 
 // Here I test the hook that tells a page when the internet goes off and on
 

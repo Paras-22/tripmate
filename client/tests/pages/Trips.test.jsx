@@ -1,9 +1,9 @@
 import 'fake-indexeddb/auto'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { saveSession } from '../api'
-import { clearOffline } from '../offlineDB'
-import Trips from './Trips'
+import { saveSession } from '../../src/services/api'
+import { clearOffline } from '../../src/services/offlineDB'
+import Trips from '../../src/pages/Trips'
 
 // Here I test the organiser's home page with the list of trips
 

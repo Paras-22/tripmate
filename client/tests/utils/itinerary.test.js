@@ -1,4 +1,4 @@
-import { formatDate, groupByDay } from './itinerary'
+import { formatDate, groupByDay } from '../../src/utils/itinerary'
 
 // Here I test the two helper functions that turn the trip data into the day-by-day plan
 
