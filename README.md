@@ -21,40 +21,39 @@ TripMate is a Progressive Web App that keeps a group's trip plan in one place. T
 
 ## Folders
 
+The code is grouped into packages by what each file does, and the tests have their own package.
+
 ```
-server/src/
-  index.js               starts the server
-  db.js                  one shared MongoDB connection (Singleton)
-  logger.js              logs requests and errors to the terminal and logs/app.log
-  app.js                 security headers, routes, error handling
-  models/Trip.js         trip, activity and push subscription data
-  middleware/auth.js     JWT check and roles
-  routes/auth.js         Google sign in and invite code join
-  routes/trips.js        CRUD for trips and activities
-  tripEvents.js          tells observers when a trip changes (Observer)
-  push.js                sends push notifications (an observer)
-server/tests/
-  setup.js               shared setup: in-memory MongoDB, fake Google and push
-  auth.test.js           sign in, invite code, JWT tricks
-  trips.test.js          trip CRUD and who may use it
-  activities.test.js     activity CRUD
-  push.test.js           push alerts
-  db.test.js             one shared connection (Singleton)
-  tripEvents.test.js     observers (Observer)
-  middleware.test.js     unit tests for the auth filters
-  Trip.model.test.js     unit tests for the data rules
-client/src/
-  App.jsx                pages and routes
-  api.js                 API calls and offline fallback
-  offlineDB.js           IndexedDB
-  push.js                push subscription in the browser
-  service-worker.js      offline cache and push events
-  pages/                 Login, Trips, Trip
-  components/            forms
+server/
+  src/
+    index.js                 starts the server
+    app.js                   security headers, routes, error handling
+    config/db.js             one shared MongoDB connection (Singleton)
+    models/Trip.js           trip, activity and push subscription data
+    middleware/auth.js       JWT check and roles (Intercepting Filter)
+    routes/auth.js           Google sign in and invite code join
+    routes/trips.js          CRUD for trips and activities
+    services/tripEvents.js   tells observers when a trip changes (Observer)
+    services/push.js         sends push notifications (an observer)
+    utils/logger.js          logs requests and errors to the terminal and logs/app.log
+  tests/
+    helpers/setup.js         shared setup: in-memory MongoDB, fake Google and push
+    api/                     API tests: auth, trips, activities, push, db
+    unit/                    unit tests: middleware, Trip model, tripEvents
+client/
+  src/
+    main.jsx, App.jsx        start the app and choose the page
+    service-worker.js        offline cache and push events
+    pages/                   Login, Trips, Trip
+    components/              Form, TripForm, ActivityForm
+    services/                api.js (API calls and offline Proxy), offlineDB.js (IndexedDB), push.js
+    hooks/                   useOnline.js
+    utils/                   itinerary.js, validation.js
+  tests/                     one test file for each source file, in the same folders as src
 postman/
   TripMate.postman_collection.json   API tests for Postman
 scripts/
-  start-replica-set.ps1  starts 3 MongoDB members
+  start-replica-set.ps1      starts 3 MongoDB members
 ```
 
 ## How to run
@@ -110,7 +109,7 @@ The data files are stored on this computer in `db-data`.
 
 ## Tests
 
-Every source file has its own test file. Frontend tests sit next to their file (for example `Login.jsx` and `Login.test.jsx`), and server tests are in `server/tests`. The server has 67 tests and the frontend has 91.
+Every source file has its own test file. Frontend tests are in `client/tests`, in the same folders as `client/src` (for example `src/pages/Login.jsx` and `tests/pages/Login.test.jsx`). Server tests are in `server/tests/api` and `server/tests/unit`. The server has 67 tests and the frontend has 91.
 
 ```
 cd server
