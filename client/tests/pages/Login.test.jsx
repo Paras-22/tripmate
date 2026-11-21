@@ -32,7 +32,7 @@ test('shows both ways in: invite code and Google sign in', () => {
   expect(screen.getByRole('heading', { name: 'Planning a trip?' })).toBeTruthy()
 })
 
-// Here a wrong code is stopped in the browser, so the server is not asked
+// Here I check a wrong code is stopped in the browser, so the server is not asked
 test('shows a message for a wrong code and does not call the server', async () => {
   showLogin()
   join('ABC')
@@ -46,7 +46,7 @@ test('asks for the code when the box is empty', async () => {
   expect(await screen.findByText('Please type the invite code from the organiser')).toBeTruthy()
 })
 
-// Here a correct code is sent to the server and the traveller session is saved
+// Here I check a correct code is sent to the server and the traveller session is saved
 test('joins the trip with a correct code and saves the session', async () => {
   fetch.mockResolvedValue({
     ok: true,
@@ -59,7 +59,7 @@ test('joins the trip with a correct code and saves the session', async () => {
   await waitFor(() => expect(getSession()?.role).toBe('traveller'))
   const [url, options] = fetch.mock.calls[0]
   expect(url).toBe('/api/auth/join')
-  expect(JSON.parse(options.body)).toEqual({ code: 'a1b2c3d4' }) // spaces removed
+  expect(JSON.parse(options.body)).toEqual({ code: 'a1b2c3d4' }) // here I check the spaces were removed
 })
 
 test('shows the server message when the code does not exist', async () => {

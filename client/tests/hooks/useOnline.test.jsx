@@ -25,7 +25,7 @@ test('follows the internet going off and on', () => {
   expect(result.current).toBe(true)
 })
 
-// Here the hook must stop listening when the page closes, or it leaks memory
+// Here I check the hook stops listening when the page closes, or it would leak memory
 test('removes its listeners when the page closes', () => {
   const remove = vi.spyOn(window, 'removeEventListener')
   const { unmount } = renderHook(() => useOnline())

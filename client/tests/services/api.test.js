@@ -26,7 +26,7 @@ describe('session', () => {
     expect(getSession()).toBeNull()
   })
 
-  // Here sign out must also remove the saved trips, so the next person on the phone cannot see them
+  // Here I check sign out also removes the saved trips, so the next person on the phone cannot see them
   test('sign out removes the user and the saved trips', async () => {
     saveSession({ token: 'abc' })
     await saveOffline('/trips/1', { title: 'Japan' })
@@ -37,7 +37,7 @@ describe('session', () => {
 })
 
 describe('api', () => {
-  // Here every request must carry the JWT, or the server answers 401
+  // Here I check every request carries the JWT, or the server would answer 401
   test('adds the JWT to the request', async () => {
     saveSession({ token: 'my-token' })
     await api('/trips')
@@ -53,13 +53,13 @@ describe('api', () => {
     expect(JSON.parse(options.body)).toEqual({ title: 'Japan' })
   })
 
-  // Here the page needs the status to know if the server answered or the internet is down
+  // Here I check the status is kept, because the page needs it to know if the server answered or the internet is down
   test('throws the server message with its status', async () => {
     globalThis.fetch = answer(403, { error: 'Only the organiser can do this' })
     await expect(api('/trips')).rejects.toMatchObject({ message: 'Only the organiser can do this', status: 403 })
   })
 
-  // Here an expired JWT signs the user out and sends them back to the login page
+  // Here I check an expired JWT signs the user out and sends them back to the login page
   test('signs the user out when the server says 401', async () => {
     saveSession({ token: 'old-token' })
     globalThis.fetch = answer(401, { error: 'Please sign in again' })
@@ -81,13 +81,13 @@ describe('getWithOffline (Proxy)', () => {
   })
 
   test('gives the saved copy when there is no internet', async () => {
-    await getWithOffline('/trips/t1') // online: this saves the trip
+    await getWithOffline('/trips/t1') // here I load it online first, which saves the trip
     globalThis.fetch = noInternet()
     const result = await getWithOffline('/trips/t1')
     expect(result).toEqual({ data: { title: 'Japan' }, offline: true })
   })
 
-  // Here a real error like 403 must be shown, not hidden behind an old saved copy
+  // Here I check a real error like 403 is shown, not hidden behind an old saved copy
   test('does not hide a real server error behind the saved copy', async () => {
     await getWithOffline('/trips/t1')
     globalThis.fetch = answer(403, { error: 'You are not part of this trip' })

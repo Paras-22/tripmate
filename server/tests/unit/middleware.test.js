@@ -7,7 +7,7 @@ process.env.JWT_SECRET = 'test-secret'
 const Trip = require('../../src/models/Trip')
 const { createToken, requireAuth, requireOrganiser, loadTrip } = require('../../src/middleware/auth')
 
-// Here a fake response remembers the status and the JSON it was given
+// Here I made a fake response that remembers the status and the JSON it was given
 function fakeResponse() {
   const res = { statusCode: 200, body: null }
   res.status = (code) => {
@@ -38,7 +38,7 @@ describe('requireAuth', () => {
     const next = mock.fn()
     requireAuth({ headers: {} }, res, next)
     assert.equal(res.statusCode, 401)
-    assert.equal(next.mock.callCount(), 0) // here the request never reaches the route
+    assert.equal(next.mock.callCount(), 0) // here I check the request never reaches the route
   })
 
   test('stops a token with a wrong signature with 401', () => {

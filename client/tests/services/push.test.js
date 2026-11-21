@@ -24,7 +24,7 @@ beforeEach(() => {
 describe('createSubscription', () => {
   test('asks for permission and subscribes with the VAPID public key', async () => {
     fakeBrowser()
-    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', 'AQID') // base64 for the bytes 1, 2, 3
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', 'AQID') // here I use base64 for the bytes 1, 2, 3
 
     expect(await createSubscription()).toBe(subscription)
 
@@ -34,7 +34,7 @@ describe('createSubscription', () => {
     expect([...options.applicationServerKey]).toEqual([1, 2, 3])
   })
 
-  // Here the key is base64url, with - and _ instead of + and /
+  // Here I check a base64url key, which has - and _ instead of + and /
   test('reads a base64url key with - and _ correctly', async () => {
     fakeBrowser()
     vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '-_8')
@@ -56,7 +56,7 @@ describe('getSubscription', () => {
     expect(await getSubscription()).toBe(subscription)
   })
 
-  // Here an old browser with no service worker must not crash the page
+  // Here I check an old browser with no service worker does not crash the page
   test('gives null when the browser has no service worker', async () => {
     fakeBrowser({ hasServiceWorker: false })
     expect(await getSubscription()).toBeNull()

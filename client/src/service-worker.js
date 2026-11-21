@@ -1,6 +1,6 @@
 const CACHE_NAME = 'tripmate-v1'
 
-// Here the PWA plugin puts the list of all built files, so the whole app works offline
+// Here I get the list of all built files from the PWA plugin, so the whole app works offline
 const APP_FILES = self.__WB_MANIFEST.map((file) => file.url)
 
 self.addEventListener('install', (event) => {
@@ -20,13 +20,13 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Pages: try the network first, and when offline open the saved app
+  // Here for pages I try the network first, and when offline I open the saved app
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).catch(() => caches.match('/index.html')))
     return
   }
 
-  // Files: use the saved copy first because the build gives each version a new name.
+  // Here for files I use the saved copy first, because the build gives each version a new name.
   // If a file is not saved and there is no internet, I answer with the saved app.
   event.respondWith(
     caches
@@ -53,7 +53,7 @@ self.addEventListener('push', (event) => {
   )
 })
 
-// Here clicking the alert opens that trip
+// Here I open that trip when the alert is clicked
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   event.waitUntil(self.clients.openWindow(event.notification.data.url))

@@ -14,7 +14,7 @@ function showForm(activity) {
 
 const save = () => fireEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-// Here a new activity starts on the first day of the trip with the type Other
+// Here I check a new activity starts on the first day of the trip with the type Other
 test('says Add activity and starts on the first day of the trip', () => {
   showForm()
   expect(screen.getByRole('heading', { name: 'Add activity' })).toBeTruthy()
@@ -22,7 +22,7 @@ test('says Add activity and starts on the first day of the trip', () => {
   expect(screen.getByLabelText('Type').value).toBe('other')
 })
 
-// Here min and max stop the date picker from showing days outside the trip
+// Here I check min and max stop the date picker from showing days outside the trip
 test('limits the date picker to the trip dates', () => {
   showForm()
   expect(screen.getByLabelText('Date').min).toBe('2027-01-10')
@@ -51,7 +51,7 @@ test('needs a title', async () => {
   expect(onSubmit).not.toHaveBeenCalled()
 })
 
-// Here someone could type a date by hand, so the rule checks it again
+// Here I check the rule again, because someone could type a date by hand
 test('stops a date outside the trip', async () => {
   const onSubmit = showForm({ title: 'Museum', date: '2027-02-01' })
   save()

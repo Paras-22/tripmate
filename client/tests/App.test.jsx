@@ -33,7 +33,7 @@ test('an organiser sees the list of their trips', () => {
   expect(screen.getByRole('heading', { name: 'Hi Paras' })).toBeTruthy()
 })
 
-// Here a traveller only has one trip, so they go straight to it
+// Here I check a traveller goes straight to their trip, because they only have one
 test('a traveller goes straight to their trip', async () => {
   saveSession({ token: 'jwt', role: 'traveller', tripId: 't1' })
   showApp('/')
@@ -41,7 +41,7 @@ test('a traveller goes straight to their trip', async () => {
   expect(fetch.mock.calls[0][0]).toBe('/api/trips/t1')
 })
 
-// Here the Protected route sends people who are not signed in back to the login page
+// Here I check the Protected route sends people who are not signed in back to the login page
 test('a trip page is not shown to someone who is not signed in', () => {
   showApp('/trips/t1')
   expect(screen.getByRole('heading', { name: 'Joining a trip?' })).toBeTruthy()

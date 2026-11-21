@@ -25,7 +25,7 @@ describe('Google sign in (organiser)', () => {
 })
 
 describe('invite code join (traveller)', () => {
-  // Here small letters work, because the server changes the code to capitals
+  // Here I check small letters work, because my server changes the code to capitals
   test('gives a traveller JWT for this one trip', async () => {
     const res = await request(app).post('/api/auth/join').send({ code: state.trip.inviteCode.toLowerCase() }).expect(200)
     assert.equal(res.body.role, 'traveller')
@@ -40,7 +40,7 @@ describe('invite code join (traveller)', () => {
     await request(app).post('/api/auth/join').send({ code: 'WRONG' }).expect(404)
   })
 
-  // Here { "$ne": "" } would mean "any code that is not empty" without protection
+  // Here I send { "$ne": "" }, which would mean "any code that is not empty" without protection
   test('blocks NoSQL injection in the invite code', async () => {
     await request(app).post('/api/auth/join').send({ code: { $ne: '' } }).expect(404)
   })
@@ -63,7 +63,7 @@ describe('JWT checks', () => {
     }
   })
 
-  // Here a traveller cannot make themselves an organiser by editing the token
+  // Here I check a traveller cannot make themselves an organiser by editing the token
   test('blocks a traveller token that was changed to organiser', async () => {
     const [header, , signature] = state.traveller.split('.')
     const payload = Buffer.from(JSON.stringify({ sub: 'x', role: 'organiser' })).toString('base64url')

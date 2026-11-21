@@ -15,7 +15,7 @@ export default function Login() {
     setError('')
     try {
       saveSession(await api(path, 'POST', body))
-      navigate(0) // reload the page so Home can open the right screen
+      navigate(0) // here I reload the page so Home can open the right screen
     } catch (err) {
       setError(err.status ? err.message : 'Could not reach TripMate. Check your connection.')
     }

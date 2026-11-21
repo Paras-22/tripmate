@@ -18,7 +18,7 @@ export default function Trip() {
   const [trip, setTrip] = useState(null)
   const [savedCopy, setSavedCopy] = useState(false)
   const [error, setError] = useState('')
-  const [editing, setEditing] = useState(null) // 'trip', 'new', or the activity being edited
+  const [editing, setEditing] = useState(null) // here I keep 'trip', 'new', or the activity being edited
   const [alertsOn, setAlertsOn] = useState(false)
 
   const load = useCallback(async () => {
@@ -41,7 +41,7 @@ export default function Trip() {
     return () => navigator.serviceWorker?.removeEventListener('message', load)
   }, [load, online])
 
-  // Here every change returns the updated trip, so I close the form and show it
+  // Here I get the updated trip back from every change, so I close the form and show it
   async function save(path, method, values) {
     const updated = await api(`/trips/${id}${path}`, method, values)
     setTrip(updated)

@@ -55,7 +55,7 @@ describe('organiser', () => {
     expect(screen.getByRole('button', { name: 'Delete trip' })).toBeTruthy()
   })
 
-  // Here READ: the plan is grouped by day and sorted by time
+  // Here I test READ: the plan is grouped by day and sorted by time
   test('shows the plan day by day', async () => {
     asOrganiser()
     showTrip()
@@ -64,7 +64,7 @@ describe('organiser', () => {
     expect(screen.getByText('Auckland Airport')).toBeTruthy()
   })
 
-  // Here CREATE: the new activity is sent with POST and the page shows the trip the server sends back
+  // Here I test CREATE: the new activity is sent with POST and the page shows the trip the server sends back
   test('adds an activity', async () => {
     asOrganiser()
     showTrip()
@@ -82,7 +82,7 @@ describe('organiser', () => {
     expect(options.method).toBe('POST')
   })
 
-  // Here UPDATE: Edit opens the form with the saved values and sends PUT
+  // Here I test UPDATE: Edit opens the form with the saved values and sends PUT
   test('edits an activity', async () => {
     asOrganiser()
     showTrip()
@@ -99,7 +99,7 @@ describe('organiser', () => {
     expect(fetch.mock.calls[0][1].method).toBe('PUT')
   })
 
-  // Here DELETE: Remove sends DELETE for that one activity
+  // Here I test DELETE: Remove sends DELETE for that one activity
   test('removes an activity', async () => {
     asOrganiser()
     showTrip()
@@ -142,11 +142,11 @@ describe('traveller', () => {
 })
 
 describe('offline and errors', () => {
-  // Here the saved copy from IndexedDB is shown when there is no internet
+  // Here I check the saved copy from IndexedDB is shown when there is no internet
   test('shows the last saved plan with a banner when offline', async () => {
     asTraveller()
     showTrip()
-    await screen.findByText('Flight') // online: this saves the trip
+    await screen.findByText('Flight') // here I load it online first, which saves the trip
     document.body.innerHTML = ''
 
     globalThis.fetch = vi.fn(async () => {

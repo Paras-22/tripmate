@@ -18,7 +18,7 @@ test('says New trip when there is no trip yet', () => {
   expect(screen.getByRole('heading', { name: 'New trip' })).toBeTruthy()
 })
 
-// Here the same form is used to edit, so it must start with the saved values
+// Here I use the same form to edit, so I check it starts with the saved values
 test('says Edit trip and fills in the saved values when editing', () => {
   showForm({ trip })
   expect(screen.getByRole('heading', { name: 'Edit trip' })).toBeTruthy()
@@ -54,7 +54,7 @@ test('does not save a trip that ends before it starts', async () => {
   expect(onSubmit).not.toHaveBeenCalled()
 })
 
-// Here the message goes away once the user fixes the field and saves again.
+// Here I check the message goes away once the user fixes the field and saves again.
 // The label also holds the error text now, so I find each box by how its label starts.
 test('removes the message after the field is fixed', async () => {
   const onSubmit = showForm()

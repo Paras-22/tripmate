@@ -20,12 +20,12 @@ function pick(body, fields) {
 const TRIP_FIELDS = ['title', 'destination', 'startDate', 'endDate']
 const ACTIVITY_FIELDS = ['date', 'time', 'title', 'type', 'location', 'notes']
 
-// READ: all trips of this organiser
+// Here I READ all trips of this organiser
 router.get('/', requireOrganiser, async (req, res) => {
   res.json(await Trip.find({ organiserId: req.user.sub }).sort('startDate'))
 })
 
-// CREATE: new trip with a random invite code
+// Here I CREATE a new trip with a random invite code
 router.post('/', requireOrganiser, async (req, res) => {
   const trip = await Trip.create({
     ...pick(req.body, TRIP_FIELDS),
@@ -35,12 +35,12 @@ router.post('/', requireOrganiser, async (req, res) => {
   res.status(201).json(trip)
 })
 
-// READ: one trip. Organiser and travellers can both see it.
+// Here I READ one trip. Organiser and travellers can both see it.
 router.get('/:id', loadTrip, (req, res) => {
   res.json(req.trip)
 })
 
-// UPDATE: trip details
+// Here I UPDATE the trip details
 router.put('/:id', organiserOfTrip, async (req, res) => {
   req.trip.set(pick(req.body, TRIP_FIELDS))
   await req.trip.save()
@@ -48,14 +48,14 @@ router.put('/:id', organiserOfTrip, async (req, res) => {
   res.json(req.trip)
 })
 
-// DELETE: whole trip. I tell the travellers first because the subscriptions go with it.
+// Here I DELETE the whole trip. I tell the travellers first because the subscriptions go with it.
 router.delete('/:id', organiserOfTrip, async (req, res) => {
   await tripEvents.publish(req.trip, 'This trip was cancelled')
   await req.trip.deleteOne()
   res.json({ message: 'Trip deleted' })
 })
 
-// CREATE: new activity in the itinerary
+// Here I CREATE a new activity in the itinerary
 router.post('/:id/activities', organiserOfTrip, async (req, res) => {
   req.trip.activities.push(pick(req.body, ACTIVITY_FIELDS))
   await req.trip.save()
@@ -63,7 +63,7 @@ router.post('/:id/activities', organiserOfTrip, async (req, res) => {
   res.status(201).json(req.trip)
 })
 
-// UPDATE: one activity
+// Here I UPDATE one activity
 router.put('/:id/activities/:activityId', organiserOfTrip, async (req, res) => {
   const activity = req.trip.activities.id(req.params.activityId)
   if (!activity) return res.status(404).json({ error: 'Activity not found' })
@@ -74,7 +74,7 @@ router.put('/:id/activities/:activityId', organiserOfTrip, async (req, res) => {
   res.json(req.trip)
 })
 
-// DELETE: one activity
+// Here I DELETE one activity
 router.delete('/:id/activities/:activityId', organiserOfTrip, async (req, res) => {
   const activity = req.trip.activities.id(req.params.activityId)
   if (!activity) return res.status(404).json({ error: 'Activity not found' })
@@ -86,7 +86,7 @@ router.delete('/:id/activities/:activityId', organiserOfTrip, async (req, res) =
   res.json(req.trip)
 })
 
-// Here the traveller's browser saves its push subscription for this trip.
+// Here I save the traveller browser's push subscription for this trip.
 // I remove the old copy first so one phone never gets the same alert twice.
 router.post('/:id/subscribe', loadTrip, async (req, res) => {
   const { endpoint, keys } = req.body

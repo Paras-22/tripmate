@@ -6,7 +6,7 @@ const request = require('supertest')
 const { OAuth2Client } = require('google-auth-library')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 
-process.env.NODE_ENV = 'test' // here the logger stays quiet during tests
+process.env.NODE_ENV = 'test' // here I keep the logger quiet during tests
 process.env.JWT_SECRET = 'test-secret'
 process.env.GOOGLE_CLIENT_ID = 'test-client-id'
 
@@ -32,7 +32,7 @@ const newActivity = { date: '2027-01-10', time: '09:30', title: 'Flight to Tokyo
 const subscription = { endpoint: 'https://push.example/1', keys: { p256dh: 'a', auth: 'b' } }
 const bearer = (token) => ({ Authorization: `Bearer ${token}` })
 
-// Here the tests read these after beforeEach has filled them in
+// Here I keep the values the tests read after beforeEach has filled them in
 const state = { organiser: null, traveller: null, trip: null }
 
 let mongo
@@ -48,7 +48,7 @@ after(async () => {
   await mongo.stop()
 })
 
-// Here every test starts with one trip, a signed in organiser and a joined traveller
+// Here I start every test with one trip, a signed in organiser and a joined traveller
 beforeEach(async () => {
   await Trip.deleteMany()
   sendPush.mock.resetCalls()

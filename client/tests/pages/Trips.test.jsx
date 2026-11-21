@@ -56,7 +56,7 @@ test('opens the trip form when New trip is clicked', () => {
   expect(screen.getByRole('heading', { name: 'New trip' })).toBeTruthy()
 })
 
-// Here CREATE: the new trip is sent to the server and the app opens it
+// Here I test CREATE: the new trip is sent to the server and the app opens it
 test('creates a trip and opens its page', async () => {
   showTrips()
   await screen.findByText('Japan')
@@ -75,10 +75,10 @@ test('creates a trip and opens its page', async () => {
   expect(options.method).toBe('POST')
 })
 
-// Here the list still opens offline from the copy saved last time
+// Here I check the list still opens offline from the copy saved last time
 test('shows the saved trips and a banner when offline', async () => {
   showTrips()
-  await screen.findByText('Japan') // online: this saves the list
+  await screen.findByText('Japan') // here I load it online first, which saves the list
   screen.unmount?.()
   document.body.innerHTML = ''
 

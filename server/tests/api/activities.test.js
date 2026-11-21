@@ -9,7 +9,7 @@ const addActivity = (body = newActivity, token = state.organiser) =>
   request(app).post(activitiesUrl()).set(bearer(token)).send(body)
 
 describe('organiser CRUD', () => {
-  // Here CREATE, READ, UPDATE and DELETE one activity, step by step
+  // Here I test CREATE, READ, UPDATE and DELETE of one activity, step by step
   test('creates, reads, updates and deletes an activity', async () => {
     const created = await addActivity().expect(201)
     const activity = created.body.activities[0]
@@ -20,13 +20,13 @@ describe('organiser CRUD', () => {
 
     const updated = await request(app).put(`${activitiesUrl()}/${activity._id}`).set(bearer(state.organiser)).send({ time: '10:15' }).expect(200)
     assert.equal(updated.body.activities[0].time, '10:15')
-    assert.equal(updated.body.activities[0].title, 'Flight to Tokyo') // here the other fields stay the same
+    assert.equal(updated.body.activities[0].title, 'Flight to Tokyo') // here I check the other fields stay the same
 
     const deleted = await request(app).delete(`${activitiesUrl()}/${activity._id}`).set(bearer(state.organiser)).expect(200)
     assert.equal(deleted.body.activities.length, 0)
   })
 
-  // Here a request can skip my React form, so the server checks the date too
+  // Here I check the server checks the date too, because a request can skip my React form
   test('rejects an activity outside the trip dates', async () => {
     const res = await addActivity({ ...newActivity, date: '2027-02-01' }).expect(400)
     assert.equal(res.body.error, 'The activity date must be inside the trip dates')

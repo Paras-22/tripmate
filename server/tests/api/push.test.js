@@ -15,12 +15,12 @@ describe('subscribe route', () => {
     assert.equal((await Trip.findById(state.trip._id)).subscriptions.length, 1)
   })
 
-  // Here http addresses are blocked, so nobody can make my server call an internal address
+  // Here I check http addresses are blocked, so nobody can make my server call an internal address
   test('rejects a non-https address', async () => {
     await subscribe({ ...subscription, endpoint: 'http://localhost:27017' }).expect(400)
   })
 
-  // Here the push addresses are private, like phone numbers
+  // Here I check the push addresses stay private, like phone numbers
   test('never sends the push data back to the browser', async () => {
     await subscribe()
     const res = await request(app).get(`/api/trips/${state.trip._id}`).set(bearer(state.traveller))
@@ -29,7 +29,7 @@ describe('subscribe route', () => {
 })
 
 describe('sending alerts', () => {
-  // Here subscribing twice from one phone must not give two alerts
+  // Here I check subscribing twice from one phone does not give two alerts
   test('sends one alert when the itinerary changes, even after subscribing twice', async () => {
     await subscribe()
     await subscribe()
@@ -59,7 +59,7 @@ describe('sending alerts', () => {
     assert.equal(sendPush.mock.callCount(), 0)
   })
 
-  // Here one phone failing must not stop the alert for the others
+  // Here I check one phone failing does not stop the alert for the others
   test('one broken phone does not stop the alert for the others', async () => {
     await subscribe()
     await subscribe({ ...subscription, endpoint: 'https://push.example/2' })
@@ -68,10 +68,10 @@ describe('sending alerts', () => {
     })
     await addActivity().expect(201)
     assert.equal(sendPush.mock.callCount(), 2)
-    assert.equal((await Trip.findById(state.trip._id)).subscriptions.length, 2) // here a 500 is not a dead phone
+    assert.equal((await Trip.findById(state.trip._id)).subscriptions.length, 2) // here I keep the phone, because a 500 is not a dead phone
   })
 
-  // Here 404 and 410 mean the browser removed the subscription, so I delete it
+  // Here I check 404 and 410 delete the subscription, because they mean the browser removed it
   test('removes subscriptions that have expired', async () => {
     await subscribe()
     sendPush.mock.mockImplementation(async () => {

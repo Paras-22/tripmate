@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict')
 const { mock, test } = require('node:test')
 
-process.env.NODE_ENV = 'test' // here the logger stays quiet
+process.env.NODE_ENV = 'test' // here I keep the logger quiet
 const tripEvents = require('../../src/services/tripEvents')
 
 const trip = { id: 't1', title: 'Japan' }
@@ -21,7 +21,7 @@ test('every subscribed observer gets the trip and the message', async () => {
   }
 })
 
-// Here a broken observer, like a failed push, must not stop the others or crash the route
+// Here I check a broken observer, like a failed push, does not stop the others or crash the route
 test('one failing observer does not stop the others', async () => {
   const working = mock.fn(async () => {})
   tripEvents.subscribe(async () => {
@@ -33,7 +33,7 @@ test('one failing observer does not stop the others', async () => {
   assert.equal(working.mock.callCount(), 1)
 })
 
-// Here publish waits for the observers, so the route can answer after the alerts are sent
+// Here I check publish waits for the observers, so the route can answer after the alerts are sent
 test('publish waits until the observers have finished', async () => {
   let finished = false
   tripEvents.subscribe(async () => {

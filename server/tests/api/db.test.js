@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict')
 const { test } = require('node:test')
 const mongoose = require('mongoose')
-require('../helpers/setup') // here setup.js has already connected once
+require('../helpers/setup') // here I let setup.js connect once first
 const { connectDB } = require('../../src/config/db')
 
 test('gives back the same single connection every time (Singleton)', async () => {
@@ -12,7 +12,7 @@ test('gives back the same single connection every time (Singleton)', async () =>
   assert.equal(first, mongoose.connection)
 })
 
-// Here even a different address does not open a second connection
+// Here I check even a different address does not open a second connection
 test('does not open a second connection for another address', async () => {
   const again = await connectDB('mongodb://localhost:1/other')
   assert.equal(again, mongoose.connection)

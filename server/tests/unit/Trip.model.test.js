@@ -34,7 +34,7 @@ describe('trip rules', () => {
     assert.equal(await errorFor({ ...goodTrip, title: 'a'.repeat(100) }, 'title'), undefined)
   })
 
-  // Here the spaces are removed before saving
+  // Here I check the spaces are removed before saving
   test('spaces around the title are removed', async () => {
     assert.equal(new Trip({ ...goodTrip, title: '  Japan  ' }).title, 'Japan')
   })
@@ -80,7 +80,7 @@ describe('push subscription rules', () => {
     assert.ok(await errorFor(data, 'subscriptions.0.endpoint'))
   })
 
-  // Here toJSON is what Express uses when it sends a trip to the browser
+  // Here I test toJSON, which Express uses when it sends a trip to the browser
   test('subscriptions are removed when the trip is sent to the browser', async () => {
     const trip = new Trip({ ...goodTrip, subscriptions: [{ endpoint: 'https://push.example/1', keys: { p256dh: 'a', auth: 'b' } }] })
     assert.equal(trip.toJSON().subscriptions, undefined)

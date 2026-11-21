@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const Trip = require('../models/Trip')
 
-// Here these functions are the filters of my Intercepting Filter chain (see routes/trips.js)
+// Here I wrote the filters of my Intercepting Filter chain (see routes/trips.js)
 
 // Here I made one helper that creates the JWT for both organisers and travellers
 function createToken(user) {

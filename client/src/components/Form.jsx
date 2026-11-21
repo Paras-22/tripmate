@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 
-// Here the form shares its field errors with the FieldError messages inside it
+// Here I share the form's field errors with the FieldError messages inside it
 const ErrorsContext = createContext({})
 
 // Here I show the message for one field, right under its input
@@ -34,7 +34,7 @@ export default function Form({ title, validate = () => ({}), onSubmit, onCancel,
     }
   }
 
-  // Here noValidate turns off the browser bubbles, so every message comes from my rules
+  // Here I use noValidate to turn off the browser bubbles, so every message comes from my rules
   return (
     <ErrorsContext.Provider value={fieldErrors}>
       <form className="card form" onSubmit={handleSubmit} noValidate>

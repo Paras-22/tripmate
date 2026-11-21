@@ -7,7 +7,7 @@ const logFile = path.join(__dirname, '../../logs/app.log')
 fs.mkdirSync(path.dirname(logFile), { recursive: true })
 
 function write(level, message, extra) {
-  // Here the tests set NODE_ENV=test so the test output stays clean
+  // Here I stay quiet when the tests set NODE_ENV=test, so the test output stays clean
   if (process.env.NODE_ENV === 'test') return
   const line = `${new Date().toISOString()} [${level}] ${message}${extra ? ' ' + JSON.stringify(extra) : ''}`
   if (level === 'ERROR') console.error(line)

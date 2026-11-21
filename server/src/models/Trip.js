@@ -56,7 +56,7 @@ const tripSchema = new mongoose.Schema({
       message: 'End date must be on or after the start date',
     },
   },
-  organiserId: { type: String, required: true, index: true }, // the Google id of the organiser
+  organiserId: { type: String, required: true, index: true }, // here I keep the Google id of the organiser
   inviteCode: { type: String, required: true, unique: true },
   activities: [activitySchema],
   subscriptions: [subscriptionSchema],

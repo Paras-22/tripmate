@@ -11,7 +11,7 @@ describe('validateTrip', () => {
     expect(validateTrip(goodTrip)).toEqual({})
   })
 
-  // Here typing only spaces must not count as a name
+  // Here I check typing only spaces does not count as a name
   test('a trip needs a name and destination, and spaces alone do not count', () => {
     const errors = validateTrip({ ...goodTrip, title: '   ', destination: '' })
     expect(errors.title).toBe('Please enter a trip name')
@@ -24,7 +24,7 @@ describe('validateTrip', () => {
     expect(errors.endDate).toBe('Please pick an end date')
   })
 
-  // Here a one-day trip is allowed, so the same start and end date is fine
+  // Here I allow a one-day trip, so the same start and end date is fine
   test('a trip cannot end before it starts, but can be one day', () => {
     expect(validateTrip({ ...goodTrip, endDate: '2027-01-09' }).endDate).toBe(
       'End date must be on or after the start date',
@@ -32,7 +32,7 @@ describe('validateTrip', () => {
     expect(validateTrip({ ...goodTrip, endDate: '2027-01-10' })).toEqual({})
   })
 
-  // Here the limit is the same as the server, so the two never disagree
+  // Here I use the same limit as the server, so the two never disagree
   test('a trip name longer than 100 characters is stopped', () => {
     expect(validateTrip({ ...goodTrip, title: 'a'.repeat(101) }).title).toMatch(/100 characters/)
     expect(validateTrip({ ...goodTrip, title: 'a'.repeat(100) })).toEqual({})
@@ -46,7 +46,7 @@ describe('validateActivity', () => {
     expect(validateActivity(activity, trip)).toEqual({})
   })
 
-  // Here the first and last day of the trip are both allowed
+  // Here I check the first and last day of the trip are both allowed
   test('an activity must be on a day of the trip', () => {
     expect(validateActivity({ ...activity, date: '2027-01-15' }, trip)).toEqual({})
     expect(validateActivity({ ...activity, date: '2027-01-16' }, trip).date).toBe(
@@ -61,7 +61,7 @@ describe('validateActivity', () => {
     expect(errors.notes).toMatch(/500 characters/)
   })
 
-  // Here the time is optional, but when it is there it must look like 09:30
+  // Here I keep the time optional, but when it is there it must look like 09:30
   test('the time is optional but must be HH:MM', () => {
     expect(validateActivity({ ...activity, time: '' }, trip)).toEqual({})
     expect(validateActivity({ ...activity, time: '9am' }, trip).time).toBeTruthy()
@@ -69,7 +69,7 @@ describe('validateActivity', () => {
 })
 
 describe('validateInviteCode', () => {
-  // Here small letters are fine, because the server changes the code to capitals
+  // Here I allow small letters, because my server changes the code to capitals
   test('invite codes must be 8 letters and numbers', () => {
     expect(validateInviteCode('a1b2c3d4')).toBe('')
     expect(validateInviteCode('')).toBe('Please type the invite code from the organiser')

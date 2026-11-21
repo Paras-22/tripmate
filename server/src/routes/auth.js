@@ -14,7 +14,7 @@ router.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }))
 // I check it with Google here, and then I give back my own JWT.
 router.post('/google', async (req, res) => {
   try {
-    // Here the audience check makes sure the credential was made for my app only
+    // Here I check the audience, so the credential must have been made for my app only
     const audience = process.env.GOOGLE_CLIENT_ID
     if (!audience) throw new Error('GOOGLE_CLIENT_ID is missing')
 

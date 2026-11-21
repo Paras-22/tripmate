@@ -13,13 +13,13 @@ async function notifyTravellers(trip, message) {
   const payload = JSON.stringify({ title: trip.title, body: message, url: `/trips/${trip.id}` })
   const expired = []
 
-  // Here one failed phone does not stop the others from getting the message
+  // Here I make sure one failed phone does not stop the others from getting the message
   await Promise.all(
     trip.subscriptions.map(async ({ endpoint, keys }) => {
       try {
         await webpush.sendNotification({ endpoint, keys }, payload)
       } catch (error) {
-        // Here 404 and 410 mean the browser removed the subscription, so I delete it
+        // Here I delete the subscription on 404 and 410, because they mean the browser removed it
         if ([404, 410].includes(error.statusCode)) expired.push(endpoint)
         else logger.warn('Push failed', { status: error.statusCode, error: error.message })
       }

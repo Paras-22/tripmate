@@ -6,14 +6,14 @@ const { app, Trip, request, state, bearer, newTrip } = require('../helpers/setup
 const tripUrl = () => `/api/trips/${state.trip._id}`
 
 describe('organiser CRUD', () => {
-  // Here CREATE: the server makes the invite code, not the browser
+  // Here I test CREATE: the server makes the invite code, not the browser
   test('creates a trip with a random 8 character invite code', async () => {
     const res = await request(app).post('/api/trips').set(bearer(state.organiser)).send(newTrip).expect(201)
     assert.match(res.body.inviteCode, /^[A-F0-9]{8}$/)
     assert.notEqual(res.body.inviteCode, state.trip.inviteCode)
   })
 
-  // Here READ: the list only has this organiser's trips, sorted by start date
+  // Here I test READ: the list only has this organiser's trips, sorted by start date
   test('lists only my trips, sorted by start date', async () => {
     await request(app).post('/api/trips').set(bearer(state.organiser)).send({ ...newTrip, title: 'Earlier', startDate: '2026-12-01', endDate: '2026-12-02' })
     await Trip.create({ ...newTrip, title: 'Not mine', organiserId: 'someone-else', inviteCode: 'FFFF0000' })
@@ -27,7 +27,7 @@ describe('organiser CRUD', () => {
     assert.equal(res.body.title, 'Japan')
   })
 
-  // Here UPDATE and DELETE
+  // Here I test UPDATE and DELETE
   test('updates and deletes a trip', async () => {
     const res = await request(app).put(tripUrl()).set(bearer(state.organiser)).send({ title: 'Japan 2027' }).expect(200)
     assert.equal(res.body.title, 'Japan 2027')
@@ -43,7 +43,7 @@ describe('organiser CRUD', () => {
     await request(app).post('/api/trips').set(bearer(state.organiser)).send({ ...newTrip, startDate: '10/01/2027' }).expect(400)
   })
 
-  // Here the browser could send extra fields, but the server only takes the ones I allow
+  // Here I check the server only takes the fields I allow, even if the browser sends extra ones
   test('cannot change the organiser or invite code', async () => {
     const res = await request(app)
       .put(tripUrl())
@@ -86,7 +86,7 @@ describe('errors', () => {
     await request(app).get('/api/trips/000000000000000000000000').set(bearer(state.organiser)).expect(404)
   })
 
-  // Here the error handler hides the details, so attackers learn nothing about the code
+  // Here I check the error handler hides the details, so attackers learn nothing about the code
   test('an unexpected error gives a simple message and hides the details', async () => {
     const find = mock.method(Trip, 'find', () => {
       throw new Error('database is down at 10.0.0.5')

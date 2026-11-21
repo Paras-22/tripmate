@@ -23,7 +23,7 @@ body {
   background: var(--paper);
 }
 
-/* Here the app is one narrow column because it is made for phones first */
+/* Here I keep the app in one narrow column because I made it for phones first */
 .page {
   max-width: 640px;
   margin: 0 auto;
@@ -98,7 +98,7 @@ a {
   min-width: 130px;
 }
 
-/* Here buttons and inputs are at least 44px tall so they are easy to tap */
+/* Here I make buttons and inputs at least 44px tall so they are easy to tap */
 button {
   min-height: 44px;
   padding: 0 16px;
@@ -158,7 +158,7 @@ textarea {
   font-weight: 600;
 }
 
-/* Here a wrong field gets a red border and its message right under it */
+/* Here I give a wrong field a red border and put its message right under it */
 .field-error {
   color: var(--red);
   font-size: 0.9rem;
@@ -206,7 +206,7 @@ label:has(.field-error) :is(input, textarea) {
   text-decoration: none;
 }
 
-/* Here the invite code looks like a travel ticket */
+/* Here I style the invite code like a travel ticket */
 .ticket {
   display: flex;
   justify-content: space-between;
@@ -233,7 +233,7 @@ label:has(.field-error) :is(input, textarea) {
   margin-top: 8px;
 }
 
-/* Here each activity shows the time on the left and the details on the right */
+/* Here I show the time of each activity on the left and the details on the right */
 .activity {
   display: grid;
   grid-template-columns: 72px 1fr;

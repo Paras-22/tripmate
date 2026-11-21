@@ -40,7 +40,7 @@ app.use('/api', requestLogger)
 app.use('/api/auth', authRoutes)
 app.use('/api/trips', tripRoutes)
 
-// Here the same server gives the built React app, so frontend and API share one address
+// Here I let the same server give the built React app, so frontend and API share one address
 app.use(express.static(clientFolder))
 app.get(/^(?!\/api).*/, (req, res) => res.sendFile(path.join(clientFolder, 'index.html')))
 

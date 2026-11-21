@@ -1,4 +1,4 @@
-// Here the .env file stays in the server folder, one level above src
+// Here I load the .env file from the server folder, one level above src
 require('dotenv').config({ path: require('path').join(__dirname, '../.env') })
 const app = require('./app')
 const { connectDB } = require('./config/db')

@@ -3,7 +3,7 @@ import Form, { FieldError } from '../../src/components/Form'
 
 // Here I test the shared Form wrapper that TripForm and ActivityForm both use
 
-// Here a small form with one field is enough to test the wrapper
+// Here I use a small form with one field, which is enough to test the wrapper
 function showForm({ validate, onSubmit = vi.fn(async () => {}), onCancel = vi.fn() } = {}) {
   render(
     <Form title="Test form" validate={validate} onSubmit={onSubmit} onCancel={onCancel}>
@@ -24,7 +24,7 @@ test('shows the title', () => {
   expect(screen.getByRole('heading', { name: 'Test form' })).toBeTruthy()
 })
 
-// Here the form reads the inputs with FormData, so no state is needed for each field
+// Here I check the form reads the inputs with FormData, so no state is needed for each field
 test('sends the values of the inputs when saved', async () => {
   const { onSubmit } = showForm()
   save()
@@ -38,9 +38,9 @@ test('shows the error under the field and does not save when a rule fails', asyn
   expect(onSubmit).not.toHaveBeenCalled()
 })
 
-// Here the button changes while saving, so the user cannot save twice
+// Here I check the button changes while saving, so the user cannot save twice
 test('shows Saving... while it waits for the server', async () => {
-  showForm({ onSubmit: () => new Promise(() => {}) }) // a save that never finishes
+  showForm({ onSubmit: () => new Promise(() => {}) }) // here I use a save that never finishes
   save()
   const button = await screen.findByRole('button', { name: 'Saving...' })
   expect(button.disabled).toBe(true)
@@ -56,7 +56,7 @@ test('shows the server message when the server says no', async () => {
   expect(await screen.findByText('Only the organiser can do this')).toBeTruthy()
 })
 
-// Here an error with no status means the server was not reached
+// Here I treat an error with no status as the server not being reached
 test('asks the user to check the connection when the server cannot be reached', async () => {
   showForm({
     onSubmit: async () => {

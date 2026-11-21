@@ -11,7 +11,7 @@ test('saves an answer and loads it back by its key', async () => {
   expect(await loadOffline('/trips/1')).toEqual({ title: 'Japan' })
 })
 
-// Here saving the same key again must replace the old copy, so the phone keeps the newest plan
+// Here I check saving the same key again replaces the old copy, so the phone keeps the newest plan
 test('saving the same key again keeps only the newest copy', async () => {
   await saveOffline('/trips/1', { title: 'Old plan' })
   await saveOffline('/trips/1', { title: 'New plan' })
@@ -28,7 +28,7 @@ test('keeps different trips apart', async () => {
   expect((await loadOffline('/trips/2')).title).toBe('Bali')
 })
 
-// Here clear is used on sign out
+// Here I test clear, which I use on sign out
 test('clear removes everything that was saved', async () => {
   await saveOffline('/trips/1', { title: 'Japan' })
   await saveOffline('/trips', [{ title: 'Japan' }])

@@ -31,7 +31,7 @@ export function validateActivity(values, trip) {
   if (!title) errors.title = 'Please say what is happening'
   else if (title.length > 120) errors.title = 'This must be 120 characters or less'
 
-  // Here the date must be inside the trip, so an activity never shows on a missing day
+  // Here I make sure the date is inside the trip, so an activity never shows on a missing day
   if (!values.date) errors.date = 'Please pick a date'
   else if (values.date < trip.startDate || values.date > trip.endDate) {
     errors.date = `Pick a date between ${trip.startDate} and ${trip.endDate}`
@@ -43,7 +43,7 @@ export function validateActivity(values, trip) {
   return errors
 }
 
-// Here the invite code must look like the codes the server makes: 8 letters and numbers
+// Here I check the invite code looks like the codes my server makes: 8 letters and numbers
 export function validateInviteCode(code) {
   const value = clean(code)
   if (!value) return 'Please type the invite code from the organiser'

@@ -5,7 +5,7 @@
 $mongod = (Get-Command mongod -ErrorAction SilentlyContinue).Source
 if (-not $mongod) { $mongod = Resolve-Path 'C:\Program Files\MongoDB\Server\*\bin\mongod.exe' | Select-Object -Last 1 -ExpandProperty Path }
 
-# Here each member gets its own port and its own data folder
+# Here I give each member its own port and its own data folder
 foreach ($port in 27031, 27032, 27033) {
     $folder = "db-data/$port"
     New-Item -ItemType Directory -Force $folder | Out-Null

@@ -5,13 +5,13 @@ import { turnOffAlerts } from './push'
 export const getSession = () => JSON.parse(localStorage.getItem('session'))
 export const saveSession = (session) => localStorage.setItem('session', JSON.stringify(session))
 
-// Here sign out also removes the saved trips and alerts from this device
+// Here I also remove the saved trips and alerts from this device on sign out
 export async function signOut() {
   localStorage.removeItem('session')
   await Promise.all([clearOffline(), turnOffAlerts()])
 }
 
-// Here all API calls go through one function that adds the JWT
+// Here I send all API calls through one function that adds the JWT
 export async function api(path, method = 'GET', body) {
   const session = getSession()
   const response = await fetch(`/api${path}`, {
@@ -24,7 +24,7 @@ export async function api(path, method = 'GET', body) {
   })
   const data = await response.json()
 
-  // Here an expired JWT sends the user back to the login page
+  // Here I send the user back to the login page when the JWT has expired
   if (response.status === 401 && session) {
     await signOut()
     location.assign('/')
@@ -43,7 +43,7 @@ export async function getWithOffline(path) {
     await saveOffline(path, data)
     return { data, offline: false }
   } catch (error) {
-    if (error.status) throw error // the server answered with a real error
+    if (error.status) throw error // here I show a real error when the server answered
     const data = await loadOffline(path)
     if (!data) throw new Error('You are offline and this has not been saved yet')
     return { data, offline: true }
