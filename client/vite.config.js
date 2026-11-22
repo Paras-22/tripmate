@@ -27,5 +27,7 @@ export default defineConfig({
   ],
   // Here I send API calls to the Express server while developing
   server: { proxy: { '/api': 'http://localhost:5000' } },
+  // Here I add source maps to the build, so Chrome DevTools shows my real files and breakpoints work on port 5000
+  build: { sourcemap: true },
   test: { environment: 'jsdom', globals: true },
 })
